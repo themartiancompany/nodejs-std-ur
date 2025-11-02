@@ -19,7 +19,6 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
 # Maintainers:
 #   Truocolo
 #     <truocolo@aol.com>
@@ -76,18 +75,18 @@ if [[ ! -v "${_archive_format}" ]]; then
     fi
   fi
 fi
-_pkg=rollup-plugin-dts
+_pkg=std-path
 pkgbase="${_node}-${_pkg}"
 pkgname=(
   "${pkgbase}"
 )
 _pkgdesc=(
-  "Rollup plugin to generate"
-  "'.d.ts' rollup files for"
-  "typescript projects."
+  "JavaScript utilities"
+  "for working with"
+  "OS-specific file paths."
 )
 pkgdesc="${_pkgdesc[*]}"
-pkgver=6.2.3
+pkgver=1.1.2
 _commit="2811b95532c1dc51e8c7463ed86f99daed1a5381"
 pkgrel=1
 arch=(

@@ -19,7 +19,7 @@
 [comment]: <> (License along with this program.)
 [comment]: <> (If not, see <https://www.gnu.org/licenses/>.)
 
-# `nodejs-rollup`
+# `nodejs-std-path`
 
 universal recipe for
 [user repo](
