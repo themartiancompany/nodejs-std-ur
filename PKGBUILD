@@ -53,6 +53,13 @@ fi
 if [[ ! -v "_git_http" ]]; then
   _git_http="github"
 fi
+if [[ ! -v "_git" ]]; then
+  if [[ "${_evmfs}" == "true" ]]; then
+    _git="true"
+  if [[ "${_evmfs}" == "false" ]]; then
+    _git="false"
+  fi
+fi
 _archive_format="tgz"
 if [[ ! -v "${_archive_format}" ]]; then
   if [[ "${_npm}" == "false" ]]; then
@@ -94,8 +101,15 @@ makedepends=(
   "npm"
   "typescript"
 )
+if [[ "${_git}" == "true" ]]; then
+  makedepends+=(
+    "git"
+  )
+fi
 _tarname="${_pkg}-${pkgver}"
 _tarfile="${_tarname}.${_archive_format}"
+_bundle_sum="4cce8e175ca17028860c739112cbb9be3052efc44e12026b0a83632ad46927b0"
+_bundle_sig_sum="87fc88bc87ed3f5df402911695a86eb892ccc074d1be723d3dbf82d04bace79f"
 _sum="d49906ca8f1488dc73fb20e692523cbd1f778caaecefeb368166e0fb6d9d78ef"
 _sig_sum="6122a66cdcdbfe0c58c0744db63d3ce9cebcf2c12080a5765f149b964807d8a0"
 # Dvorak
@@ -105,23 +119,33 @@ _evmfs_ns="0x6E5163fC4BFc1511Dbe06bB605cc14a3e462332b"
 _evmfs_network="100"
 _evmfs_address="0x69470b18f8b8b5f92b48f6199dcb147b4be96571"
 _evmfs_dir="evmfs://${_evmfs_network}/${_evmfs_address}/${_evmfs_ns}"
+_bundle_uri="${_evmfs_dir}/${_bundle_sum}"
+_bundle_src="${_tarfile}::${_bundle_uri}"
 _evmfs_uri="${_evmfs_dir}/${_sum}"
 _evmfs_src="${_tarfile}::${_evmfs_uri}"
 _sig_uri="${_evmfs_dir}/${_sig_sum}"
 _sig_src="${_tarfile}.sig::${_sig_uri}"
+_bundle_sig_uri="${_evmfs_dir}/${_bundle_sig_sum}"
+_bundle_sig_src="${_tarfile}.sig::${_bundle_sig_uri}"
 _npm_http="http://registry.npmjs.org"
 source=()
 sha256sums=()
 if [[ "${_evmfs}" == "true" ]]; then
+  makedepends+=(
+    "evmfs"
+  )
   if [[ "${_npm}" == "true" ]]; then
-    _uri="${_evmfs_uri}"
-    source+=(
-      "${_sig_src}"
-    )
-    sha256sums+=(
-      "${_sig_sum}"
-    )
+    _uri="${_evmfs_src}"
+  elif [[ "${_npm}" == "false" ]]; then
+    _uri="${_bundle_uri}"
+    _sig_sum="${_bundle_sum}"
   fi
+  source+=(
+    "${_sig_src}"
+  )
+  sha256sums+=(
+    "${_sig_sum}"
+  )
 elif [[ "${_evmfs}" == "false" ]]; then
   if [[ "${_npm}" == "true" ]]; then
     _uri="${_npm_http}/${_pkg}/-/${_tarfile}"
@@ -137,6 +161,29 @@ sha256sums+=(
 noextract=(
   "${_tarfile}"
 )
+
+prepare() {
+  if [[ "${_evmfs}" == "true" && \
+        "${_git}" == "true" ]]; then
+    git \
+      init \
+      "${srcdir}/${_tarname}"
+    cd \
+      "${_tarname}"
+    git \
+      "${_git_opts[@]}" \
+      remote \
+        add \
+          origin \
+          "${srcdir}/${_tarfile}" || \
+      true
+    git \
+      "${_git_opts[@]}" \
+      pull \
+        origin \
+          "master"
+  fi
+}
 
 build() {
   local \
