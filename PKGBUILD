@@ -48,7 +48,11 @@ if [[ "${_os}" == "Android" ]]; then
   _node="nodejs-lts"
 fi
 if [[ ! -v "_npm" ]]; then
-  _npm="true"
+  if [[ "${_evmfs}" == "true" ]]; then
+    _npm="false"
+  elif [[ "${_evmfs}" == "true" ]]; then
+    _npm="true"
+  fi
 fi
 if [[ ! -v "_git_http" ]]; then
   _git_http="github"
@@ -56,15 +60,19 @@ fi
 if [[ ! -v "_git" ]]; then
   if [[ "${_evmfs}" == "true" ]]; then
     _git="true"
-  if [[ "${_evmfs}" == "false" ]]; then
+  elif [[ "${_evmfs}" == "false" ]]; then
     _git="false"
   fi
 fi
 _archive_format="tgz"
 if [[ ! -v "${_archive_format}" ]]; then
   if [[ "${_npm}" == "false" ]]; then
-    if [[ "${_git_http}" == "github" ]]; then
-      _archive_format="zip"
+    if [[ "${_evmfs}" == "true" ]]; then
+      _archive_format="bundle"
+    elif [[ "${_evmfs}" == "false" ]]; then
+      if [[ "${_git_http}" == "github" ]]; then
+        _archive_format="zip"
+      fi
     fi
   fi
 fi
@@ -108,10 +116,10 @@ if [[ "${_git}" == "true" ]]; then
 fi
 _tarname="${_pkg}-${pkgver}"
 _tarfile="${_tarname}.${_archive_format}"
-_bundle_sum="4cce8e175ca17028860c739112cbb9be3052efc44e12026b0a83632ad46927b0"
-_bundle_sig_sum="87fc88bc87ed3f5df402911695a86eb892ccc074d1be723d3dbf82d04bace79f"
 _sum="d49906ca8f1488dc73fb20e692523cbd1f778caaecefeb368166e0fb6d9d78ef"
 _sig_sum="6122a66cdcdbfe0c58c0744db63d3ce9cebcf2c12080a5765f149b964807d8a0"
+_bundle_sum="4cce8e175ca17028860c739112cbb9be3052efc44e12026b0a83632ad46927b0"
+_bundle_sig_sum="87fc88bc87ed3f5df402911695a86eb892ccc074d1be723d3dbf82d04bace79f"
 # Dvorak
 _evmfs_ns="0x87003Bd6C074C713783df04f36517451fF34CBEf"
 # Truocolo
@@ -138,7 +146,8 @@ if [[ "${_evmfs}" == "true" ]]; then
     _uri="${_evmfs_src}"
   elif [[ "${_npm}" == "false" ]]; then
     _uri="${_bundle_uri}"
-    _sig_sum="${_bundle_sum}"
+    _sum="${_bundle_sum}"
+    _sig_sum="${_bundle_sig_sum}"
   fi
   source+=(
     "${_sig_src}"
@@ -160,6 +169,17 @@ sha256sums+=(
 )
 noextract=(
   "${_tarfile}"
+)
+validpgpkeys=(
+  # Truocolo
+  #   <truocolo@aol.com>
+  '97E989E6CF1D2C7F7A41FF9F95684DBE23D6A3E9'
+  'DD6732B02E6C88E9E27E2E0D5FC6652B9D9A6C01'
+  #   <truocolo@0x6E5163fC4BFc1511Dbe06bB605cc14a3e462332b>
+  'F690CBC17BD1F53557290AF51FC17D540D0ADEED'
+  # Pellegrino Prevete (dvorak)
+  #   <dvorak@0x87003Bd6C074C713783df04f36517451fF34CBEf>
+  '12D8E3D7888F741E89F86EE0FEC8567A644F1D16'
 )
 
 prepare() {
