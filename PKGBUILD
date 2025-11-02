@@ -87,7 +87,7 @@ _pkgdesc=(
   "typescript projects."
 )
 pkgdesc="${_pkgdesc[*]}"
-pkgver=4.52.5
+pkgver=6.2.3
 _commit="2811b95532c1dc51e8c7463ed86f99daed1a5381"
 pkgrel=1
 arch=(
@@ -107,8 +107,13 @@ provides=(
 )
 makedepends=(
   "npm"
-  "typescript"
 )
+if [[ "${_npm}" == "false" ]]; then
+  makedepends+=(
+    "${_node}-rollup"
+    "typescript"
+  )
+fi
 if [[ "${_git}" == "true" ]]; then
   makedepends+=(
     "git"
@@ -213,7 +218,15 @@ prepare() {
 
 build() {
   local \
-    _rollup_opts=()
+    _rollup_opts=() \
+    _files=()
+  _files+=(
+    "COPYNG"
+    "COPYNG.lesser"
+    "README.md"
+    "dist"
+    "package.json"
+  )
   _rollup_opts+=(
     --config
       ".build/rollup.config.js"
@@ -221,9 +234,26 @@ build() {
   if [[ "${_npm}" == "false" ]]; then
     cd \
       "${_tarname}"
+    npm \
+      install
     tsc
+      "${_tsc_opts[@]}"
     rollup \
       "${_rollup_opts[@]}"
+    mkdir \
+      -p \
+      "build"
+    cp \
+      -r \
+      "${_files[@]}" \
+      "build"
+    cd \
+      "build"
+    npm \
+      pack
+    mv \
+      "${_pkg}-${pkgver}.tgz" \
+      "${srcdir}/${_pkg}-${pkgver}.tgz"
   fi
 }
 
