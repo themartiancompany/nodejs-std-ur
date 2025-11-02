@@ -222,7 +222,7 @@ build() {
     _files=()
   _files+=(
     "COPYING"
-    "COPYING.lesser"
+    "COPYING.LESSER"
     "README.md"
     "dist"
     "package.json"
