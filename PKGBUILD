@@ -221,8 +221,8 @@ build() {
     _rollup_opts=() \
     _files=()
   _files+=(
-    "COPYNG"
-    "COPYNG.lesser"
+    "COPYING"
+    "COPYING.lesser"
     "README.md"
     "dist"
     "package.json"
