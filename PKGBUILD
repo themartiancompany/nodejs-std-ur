@@ -145,6 +145,7 @@ _sig_src="${_tarfile}.sig::${_sig_uri}"
 _bundle_sig_uri="${_evmfs_dir}/${_bundle_sig_sum}"
 _bundle_sig_src="${_tarfile}.sig::${_bundle_sig_uri}"
 _npm_http="http://registry.npmjs.org"
+_npm_http="http://npm.sr.io"
 source=()
 sha256sums=()
 if [[ "${_evmfs}" == "true" ]]; then
@@ -256,7 +257,7 @@ build() {
   fi
 }
 
-package_nodejs-rollup-plugin-dts() {
+package_nodejs-std-path() {
   local \
     _npm_options=() \
     _find_opts=()
