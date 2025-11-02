@@ -61,29 +61,28 @@ if [[ ! -v "${_archive_format}" ]]; then
     fi
   fi
 fi
-_pkg=rollup
+_pkg=rollup-plugin-dts
 pkgbase="${_node}-${_pkg}"
 pkgname=(
   "${pkgbase}"
 )
 _pkgdesc=(
-  "Browser-compatible fs module"
-  "based on OPFS, which references"
-  "the Deno Runtime File System"
-  "and Deno @std/fs APIs."
+  "Rollup plugin to generate"
+  "'.d.ts' rollup files for"
+  "typescript projects."
 )
 pkgdesc="${_pkgdesc[*]}"
 pkgver=4.52.5
-_commit="17bbfff4add818aa762a9bfceca10d29143e2fb8"
+_commit="2811b95532c1dc51e8c7463ed86f99daed1a5381"
 pkgrel=1
 arch=(
   'any'
 )
 _http="https://${_git_http}.com"
-_ns="JiangJie"
+_ns="Swatinem"
 url="${_http}/${_ns}/${_pkg}"
 license=(
-  'MIT'
+  'LGPL3'
 )
 depends=(
   "${_node}"
@@ -93,6 +92,7 @@ provides=(
 )
 makedepends=(
   "npm"
+  "typescript"
 )
 _tarname="${_pkg}-${pkgver}"
 _tarfile="${_tarname}.${_archive_format}"
@@ -138,7 +138,23 @@ noextract=(
   "${_tarfile}"
 )
 
-package_nodejs-rollup() {
+build() {
+  local \
+    _rollup_opts=()
+  _rollup_opts+=(
+    --config
+      ".build/rollup.config.js"
+  )
+  if [[ "${_npm}" == "false" ]]; then
+    cd \
+      "${_tarname}"
+    tsc
+    rollup \
+      "${_rollup_opts[@]}"
+  fi
+}
+
+package_nodejs-rollup-plugin-dts() {
   local \
     _npm_options=() \
     _find_opts=()
