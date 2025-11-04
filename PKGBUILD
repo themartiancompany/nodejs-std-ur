@@ -75,7 +75,8 @@ if [[ ! -v "${_archive_format}" ]]; then
     fi
   fi
 fi
-_pkg=std-path
+_proj=deno
+_pkg=std
 pkgbase="${_node}-${_pkg}"
 pkgname=(
   "${pkgbase}"
@@ -86,14 +87,15 @@ _pkgdesc=(
   "OS-specific file paths."
 )
 pkgdesc="${_pkgdesc[*]}"
-pkgver=1.1.2
-_commit="2811b95532c1dc51e8c7463ed86f99daed1a5381"
+pkgver=2025.10.07a
+_bundle_commit="a0acfb0084c252ec854fa04a2caf7c043f201375"
+_commit="43de5dfd4f389f5835cd2ae91389903396228e1b"
 pkgrel=1
 arch=(
   'any'
 )
 _http="https://${_git_http}.com"
-_ns="Swatinem"
+_ns="${_proj}land"
 url="${_http}/${_ns}/${_pkg}"
 license=(
   'LGPL3'
@@ -103,9 +105,11 @@ depends=(
 )
 provides=(
   "${_pkg}=${pkgver}"
+  "${_proj}-${_pkg}=${pkgver}"
 )
 makedepends=(
-  "npm"
+  "deno"
+  # "npm"
 )
 if [[ "${_npm}" == "false" ]]; then
   makedepends+=(
@@ -127,12 +131,12 @@ _tarname="${_pkg}-${_tag}"
 _tarfile="${_tarname}.${_archive_format}"
 _sum="d49906ca8f1488dc73fb20e692523cbd1f778caaecefeb368166e0fb6d9d78ef"
 _sig_sum="6122a66cdcdbfe0c58c0744db63d3ce9cebcf2c12080a5765f149b964807d8a0"
-_bundle_sum="4cce8e175ca17028860c739112cbb9be3052efc44e12026b0a83632ad46927b0"
-_bundle_sig_sum="737d7de2729723936ce4375b4092733131a98f5715898d701227dda6378d8dac"
-# Dvorak
-_evmfs_ns="0x87003Bd6C074C713783df04f36517451fF34CBEf"
+_bundle_sum="f8b6b32c486e99e7b58953ca42a50038e5472a903f3eb0af77fa66ee3658d2e6"
+_bundle_sig_sum="77d3a4697e52b066941ad1dea11022aaeb01ebbf0ea4ebb925bb611face8ba2f"
 # Truocolo
 _evmfs_ns="0x6E5163fC4BFc1511Dbe06bB605cc14a3e462332b"
+# Dvorak
+_evmfs_ns="0x87003Bd6C074C713783df04f36517451fF34CBEf"
 _evmfs_network="100"
 _evmfs_address="0x69470b18f8b8b5f92b48f6199dcb147b4be96571"
 _evmfs_dir="evmfs://${_evmfs_network}/${_evmfs_address}/${_evmfs_ns}"
@@ -234,30 +238,32 @@ build() {
   if [[ "${_npm}" == "false" ]]; then
     cd \
       "${_tarname}"
-    npm \
-      install
-    tsc
-      "${_tsc_opts[@]}"
-    rollup \
-      "${_rollup_opts[@]}"
-    mkdir \
-      -p \
-      "build"
-    cp \
-      -r \
-      "${_files[@]}" \
-      "build"
-    cd \
-      "build"
-    npm \
-      pack
-    mv \
-      "${_pkg}-${pkgver}.tgz" \
-      "${srcdir}/${_pkg}-${pkgver}.tgz"
+    sleep \
+      100
+    # npm \
+    #   install
+    # tsc
+    #   "${_tsc_opts[@]}"
+    # rollup \
+    #   "${_rollup_opts[@]}"
+    # mkdir \
+    #   -p \
+    #   "build"
+    # cp \
+    #   -r \
+    #   "${_files[@]}" \
+    #   "build"
+    # cd \
+    #   "build"
+    # npm \
+    #   pack
+    # mv \
+    #   "${_pkg}-${pkgver}.tgz" \
+    #   "${srcdir}/${_pkg}-${pkgver}.tgz"
   fi
 }
 
-package_nodejs-std-path() {
+package_nodejs-std() {
   local \
     _npm_options=() \
     _find_opts=()
