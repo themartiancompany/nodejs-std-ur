@@ -206,10 +206,6 @@ prepare() {
     cd \
       "${_tarname}"
     git \
-      checkout \
-        -b \
-        "main"
-    git \
       "${_git_opts[@]}" \
       remote \
         add \
@@ -244,8 +240,8 @@ build() {
       "${_tarname}"
     sleep \
       100
-    # npm \
-    #   install
+    deno \
+      install
     # tsc
     #   "${_tsc_opts[@]}"
     # rollup \
