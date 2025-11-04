@@ -206,6 +206,10 @@ prepare() {
     cd \
       "${_tarname}"
     git \
+      checkout \
+        -b \
+        "main"
+    git \
       "${_git_opts[@]}" \
       remote \
         add \
@@ -216,7 +220,7 @@ prepare() {
       "${_git_opts[@]}" \
       pull \
         origin \
-          "master"
+          "main"
   fi
 }
 
