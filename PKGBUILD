@@ -68,7 +68,11 @@ if [[ ! -v "${_archive_format}" ]]; then
     _archive_format="tgz"
   elif [[ "${_npm}" == "false" ]]; then
     if [[ "${_evmfs}" == "true" ]]; then
-      _archive_format="bundle"
+      if [[ "${_git}" == "true" ]]; then
+        _archive_format="bundle"
+      elif [[ "${_git}" == "false" ]]; then
+        _archive_format="tar.gz"
+      fi
     elif [[ "${_evmfs}" == "false" ]]; then
       _archive_format="tar.gz"
       if [[ "${_git_http}" == "github" ]]; then
