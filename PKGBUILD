@@ -49,8 +49,8 @@ fi
 if [[ ! -v "_npm" ]]; then
   if [[ "${_evmfs}" == "true" ]]; then
     _npm="false"
-  elif [[ "${_evmfs}" == "true" ]]; then
-    _npm="true"
+  elif [[ "${_evmfs}" == "false" ]]; then
+    _npm="false"
   fi
 fi
 if [[ ! -v "_git_http" ]]; then
@@ -58,17 +58,19 @@ if [[ ! -v "_git_http" ]]; then
 fi
 if [[ ! -v "_git" ]]; then
   if [[ "${_evmfs}" == "true" ]]; then
-    _git="true"
+    _git="false"
   elif [[ "${_evmfs}" == "false" ]]; then
     _git="false"
   fi
 fi
-_archive_format="tgz"
 if [[ ! -v "${_archive_format}" ]]; then
+  if [[ "${_npm}" == "true" ]]; then
+    _archive_format="tgz"
   if [[ "${_npm}" == "false" ]]; then
     if [[ "${_evmfs}" == "true" ]]; then
       _archive_format="bundle"
     elif [[ "${_evmfs}" == "false" ]]; then
+      _archive_format="tar.gz"
       if [[ "${_git_http}" == "github" ]]; then
         _archive_format="zip"
       fi
@@ -79,7 +81,8 @@ _proj=deno
 _pkg=std
 pkgbase="${_node}-${_pkg}"
 pkgname=(
-  "${pkgbase}"
+  "${pkgbase}-internal"
+  "${pkgbase}-path"
 )
 _pkgdesc=(
   "JavaScript utilities"
@@ -89,6 +92,8 @@ _pkgdesc=(
 pkgdesc="${_pkgdesc[*]}"
 pkgver=2025.10.07a
 _bundle_commit="a0acfb0084c252ec854fa04a2caf7c043f201375"
+_internal_commit="6a52f4f84d9e7e6614744565aac986af6a339af2"
+_path_commit="7cf8de027f5deac33fc3b5bfeed3f3a2e427076f"
 _commit="43de5dfd4f389f5835cd2ae91389903396228e1b"
 pkgrel=1
 arch=(
@@ -128,9 +133,17 @@ elif [[ "${_npm}" == "false" ]]; then
   _tag="${_commit}"
 fi
 _tarname="${_pkg}-${_tag}"
+_internalname="${_pkg}-internal-${_internal_commit}"
+_pathname="${_pkg}-path-${_path_commit}"
+_pathfile="${_pathname}.${_archive_format}"
+_internalfile="${_internalname}.${_archive_format}"
 _tarfile="${_tarname}.${_archive_format}"
 _sum="d49906ca8f1488dc73fb20e692523cbd1f778caaecefeb368166e0fb6d9d78ef"
 _sig_sum="6122a66cdcdbfe0c58c0744db63d3ce9cebcf2c12080a5765f149b964807d8a0"
+_internal_sum="cc08c83d9ebc2ac6f6f542e11e1ffff4acff8f353c2f2e8089ee8bc3a6dd5385"
+_internal_sig_sum="a4c07da9303f7f59aad15564007bc93bc68b570fe7318b62aa1861563beeefb6"
+_path_sum="6b70dd2f6c347d448c2d6140fdb70429d17135e6713ea6c095df1b34e4010e6a"
+_path_sig_sum="ad374d53565f53ce1406832630ef1561632166b3c260c19fd046cfeaebb7a873"
 _bundle_sum="f8b6b32c486e99e7b58953ca42a50038e5472a903f3eb0af77fa66ee3658d2e6"
 _bundle_sig_sum="77d3a4697e52b066941ad1dea11022aaeb01ebbf0ea4ebb925bb611face8ba2f"
 # Truocolo
@@ -142,12 +155,20 @@ _evmfs_address="0x69470b18f8b8b5f92b48f6199dcb147b4be96571"
 _evmfs_dir="evmfs://${_evmfs_network}/${_evmfs_address}/${_evmfs_ns}"
 _bundle_uri="${_evmfs_dir}/${_bundle_sum}"
 _bundle_src="${_tarfile}::${_bundle_uri}"
+_internal_uri="${_evmfs_dir}/${_internal_sum}"
+_internal_src="${_internalfile}::${_internal_uri}"
+_path_uri="${_evmfs_dir}/${_path_sum}"
+_path_src="${_pathfile}::${_path_uri}"
 _evmfs_uri="${_evmfs_dir}/${_sum}"
 _evmfs_src="${_tarfile}::${_evmfs_uri}"
 _sig_uri="${_evmfs_dir}/${_sig_sum}"
 _sig_src="${_tarfile}.sig::${_sig_uri}"
 _bundle_sig_uri="${_evmfs_dir}/${_bundle_sig_sum}"
 _bundle_sig_src="${_tarfile}.sig::${_bundle_sig_uri}"
+_internal_sig_uri="${_evmfs_dir}/${_internal_sig_sum}"
+_internal_sig_src="${_internalfile}.sig::${_internal_sig_uri}"
+_path_sig_uri="${_evmfs_dir}/${_path_sig_sum}"
+_path_sig_src="${_pathfile}.sig::${_path_sig_uri}"
 _npm_http="http://registry.npmjs.org"
 _npm_http="http://npm.sr.io"
 source=()
@@ -158,33 +179,57 @@ if [[ "${_evmfs}" == "true" ]]; then
   )
   if [[ "${_npm}" == "true" ]]; then
     _uri="${_evmfs_src}"
+    _src="${_tarfile}::${_uri}"
+    source+=(
+      "${_src}"
+      "${_sig_src}"
+    )
+    sha256sums+=(
+      "${_sum}"
+      "${_sig_sum}"
+    )
   elif [[ "${_npm}" == "false" ]]; then
-    _uri="${_bundle_uri}"
-    _sum="${_bundle_sum}"
-    _sig_src="${_bundle_sig_src}"
-    _sig_sum="${_bundle_sig_sum}"
+    if [[ "${_git}" == "true" ]]; then
+      _uri="${_bundle_uri}"
+      _sum="${_bundle_sum}"
+      _sig_src="${_bundle_sig_src}"
+      _sig_sum="${_bundle_sig_sum}"
+      source+=(
+        "${_src}"
+        "${_sig_src}"
+      )
+      sha256sums+=(
+        "${_sum}"
+        "${_sig_sum}"
+      )
+    elif [[ "${_git}" == "false" ]]; then
+      source+=(
+        "${_internal_src}"
+        "${_path_src}"
+      )
+      sha256sums+=(
+        "${_internal_sig_src}"
+        "${_path_sig_src}"
+      )
+    fi
   fi
-  source+=(
-    "${_sig_src}"
-  )
-  sha256sums+=(
-    "${_sig_sum}"
-  )
 elif [[ "${_evmfs}" == "false" ]]; then
   if [[ "${_npm}" == "true" ]]; then
     _uri="${_npm_http}/${_pkg}/-/${_tarfile}"
   fi
+  _src="${_tarfile}::${_uri}"
+  source+=(
+    "${_src}"
+  )
+  sha256sums+=(
+    "${_sum}"
+  )
 fi
-_src="${_tarfile}::${_uri}"
-source+=(
-  "${_src}"
-)
-sha256sums+=(
-  "${_sum}"
-)
-noextract=(
-  "${_tarfile}"
-)
+if [[ "${_npm}" == "true" ]]; then
+  noextract=(
+    "${_tarfile}"
+  )
+fi
 validpgpkeys=(
   # Truocolo
   #   <truocolo@aol.com>
@@ -236,35 +281,26 @@ build() {
       ".build/rollup.config.js"
   )
   if [[ "${_npm}" == "false" ]]; then
-    cd \
-      "${_tarname}"
-    sleep \
-      100
-    deno \
-      install
-    # tsc
-    #   "${_tsc_opts[@]}"
-    # rollup \
-    #   "${_rollup_opts[@]}"
-    # mkdir \
-    #   -p \
-    #   "build"
-    # cp \
-    #   -r \
-    #   "${_files[@]}" \
-    #   "build"
-    # cd \
-    #   "build"
-    # npm \
-    #   pack
-    # mv \
-    #   "${_pkg}-${pkgver}.tgz" \
-    #   "${srcdir}/${_pkg}-${pkgver}.tgz"
+    if [[ "${_git}" == "true" ]]; then
+       cd \
+         "${_tarname}"
+       # See https://github.com/denoland/std/issues/6864
+    elif [[ "${_git}" == "false" ]]; then
+      cd \
+        "${srcdir}/${_internalname}"
+      npm \
+        pack
+      mv \
+        "${_pkg}-${pkgver}.tgz" \
+        "${srcdir}/${_pkg}-${pkgver}.tgz"
+    fi
   fi
 }
 
-package_nodejs-std() {
+_npm_package() {
   local \
+    _pkg="${1}" \
+    _pkgdir="${2}" \
     _npm_options=() \
     _find_opts=()
   _npm_options=(
@@ -272,7 +308,7 @@ package_nodejs-std() {
     # --user 
     #   root 
     --prefix 
-      "${pkgdir}/usr"
+      "${_pkgdir}/usr"
   )
   find_opts+=(
     -type
@@ -286,14 +322,68 @@ package_nodejs-std() {
   npm \
     install \
     "${_npm_options[@]}" \
-    "${srcdir}/${_pkg}-${pkgver}.tgz"
+    "${srcdir}/${_pkg}"
   rm \
     -fr \
-      "${pkgdir}/usr/etc"
+      "${_pkgdir}/usr/etc"
   # Fix npm derp
   find \
-    "${pkgdir}/usr" \
+    "${_pkgdir}/usr" \
     "${_find_opts[@]}"
+}
+
+
+package_nodejs-std() {
+  _npm_package \
+    "${srcdir}/${_pkg}-${pkgver}.tgz" \
+    "${pkgdir}"
+}
+
+package_nodejs-std-internal() {
+  local \
+    _pkgdesc=()
+  pkgver="1.0.17"
+  _ns="themartiancompany"
+  url="${_http}/${_ns}/${_proj}-${_pkg}-internal-bin"
+  _archive="${_ns}-${_pkg}__internal-${pkgver}.tgz"
+  _pkgdesc=(
+    "The internal package for Deno"
+    "Standard Library."
+  )
+  pkgdesc="${_pkgdesc[*]}"
+  provides=(
+    "${pkgbase}=${pkgver}"
+    "${_proj}-${_pkg}=${pkgver}"
+    "${_node}-${_proj}-${_pkg}=${pkgver}"
+  )
+  _npm_package \
+    "${srcdir}/${_archive}" \
+    "${pkgdir}"
+}
+
+package_nodejs-std-path() {
+  local \
+    _pkgdesc=()
+  pkgver="1.1.5"
+  _ns="themartiancompany"
+  url="${_http}/${_ns}/${_proj}-${_pkg}-path-bin"
+  _archive="${_ns}-${_pkg}__path-${pkgver}.tgz"
+  _pkgdesc=(
+    "Utilities for working with"
+    "file system paths."
+  )
+  pkgdesc="${_pkgdesc[*]}"
+  depends+=(
+    "${_node}-${_pkg}-internal"
+  )
+  provides=(
+    "${pkgbase}=${pkgver}"
+    "${_proj}-${_pkg}=${pkgver}"
+    "${_node}-${_proj}-${_pkg}=${pkgver}"
+  )
+  _npm_package \
+    "${srcdir}/${_archive}" \
+    "${pkgdir}"
 }
 
 # vim:set sw=2 sts=-1 et:
