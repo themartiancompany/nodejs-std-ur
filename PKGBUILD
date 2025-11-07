@@ -139,8 +139,8 @@ elif [[ "${_npm}" == "false" ]]; then
   _tag="${_commit}"
 fi
 _tarname="${_pkg}-${_tag}"
-_internalname="${_proj}-${_pkg}-internal-${_internal_commit}"
-_pathname="${_proj}-${_pkg}-path-${_path_commit}"
+_internalname="${_proj}-${_pkg}-internal-bin-${_internal_commit}"
+_pathname="${_proj}-${_pkg}-path-bin-${_path_commit}"
 _pathfile="${_pathname}.${_archive_format}"
 _internalfile="${_internalname}.${_archive_format}"
 _tarfile="${_tarname}.${_archive_format}"
