@@ -211,11 +211,15 @@ if [[ "${_evmfs}" == "true" ]]; then
     elif [[ "${_git}" == "false" ]]; then
       source+=(
         "${_internal_src}"
+        "${_internal_sig_src}"
         "${_path_src}"
+        "${_path_sig_src}"
       )
       sha256sums+=(
-        "${_internal_sig_src}"
-        "${_path_sig_src}"
+        "${_internal_sum}"
+        "${_internal_sig_sum}"
+        "${_path_sum}"
+        "${_path_sig_sum}"
       )
     fi
   fi
