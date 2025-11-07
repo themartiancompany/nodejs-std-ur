@@ -139,8 +139,8 @@ elif [[ "${_npm}" == "false" ]]; then
   _tag="${_commit}"
 fi
 _tarname="${_pkg}-${_tag}"
-_internalname="${_pkg}-internal-${_internal_commit}"
-_pathname="${_pkg}-path-${_path_commit}"
+_internalname="${_proj}-${_pkg}-internal-${_internal_commit}"
+_pathname="${_proj}-${_pkg}-path-${_path_commit}"
 _pathfile="${_pathname}.${_archive_format}"
 _internalfile="${_internalname}.${_archive_format}"
 _tarfile="${_tarname}.${_archive_format}"
@@ -301,8 +301,15 @@ build() {
       npm \
         pack
       mv \
-        "${_pkg}-${pkgver}.tgz" \
-        "${srcdir}/${_pkg}-${pkgver}.tgz"
+        *".tgz" \
+        "${srcdir}"
+      cd \
+        "${srcdir}/${_pathname}"
+      npm \
+        pack
+      mv \
+        *".tgz" \
+        "${srcdir}"
     fi
   fi
 }
@@ -341,7 +348,6 @@ _npm_package() {
     "${_pkgdir}/usr" \
     "${_find_opts[@]}"
 }
-
 
 package_nodejs-std() {
   _npm_package \
