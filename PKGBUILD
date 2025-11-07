@@ -109,7 +109,7 @@ _http="https://${_git_http}.com"
 _ns="${_proj}land"
 url="${_http}/${_ns}/${_pkg}"
 license=(
-  'LGPL3'
+  'MIT'
 )
 depends=(
   "${_node}"
