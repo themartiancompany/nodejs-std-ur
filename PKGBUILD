@@ -339,7 +339,7 @@ _npm_package() {
   npm \
     install \
     "${_npm_options[@]}" \
-    "${srcdir}/${_pkg}"
+    "${_pkg}"
   rm \
     -fr \
       "${_pkgdir}/usr/etc"
