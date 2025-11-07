@@ -66,7 +66,7 @@ fi
 if [[ ! -v "${_archive_format}" ]]; then
   if [[ "${_npm}" == "true" ]]; then
     _archive_format="tgz"
-  if [[ "${_npm}" == "false" ]]; then
+  elif [[ "${_npm}" == "false" ]]; then
     if [[ "${_evmfs}" == "true" ]]; then
       _archive_format="bundle"
     elif [[ "${_evmfs}" == "false" ]]; then
@@ -91,6 +91,8 @@ _pkgdesc=(
 )
 pkgdesc="${_pkgdesc[*]}"
 pkgver=2025.10.07a
+_internal_pkgver="1.0.17"
+_path_pkgver="1.1.5"
 _bundle_commit="a0acfb0084c252ec854fa04a2caf7c043f201375"
 _internal_commit="6a52f4f84d9e7e6614744565aac986af6a339af2"
 _path_commit="7cf8de027f5deac33fc3b5bfeed3f3a2e427076f"
@@ -342,10 +344,9 @@ package_nodejs-std() {
 package_nodejs-std-internal() {
   local \
     _pkgdesc=()
-  pkgver="1.0.17"
   _ns="themartiancompany"
   url="${_http}/${_ns}/${_proj}-${_pkg}-internal-bin"
-  _archive="${_ns}-${_pkg}__internal-${pkgver}.tgz"
+  _archive="${_ns}-${_pkg}__internal-${_internal_pkgver}.tgz"
   _pkgdesc=(
     "The internal package for Deno"
     "Standard Library."
@@ -364,10 +365,9 @@ package_nodejs-std-internal() {
 package_nodejs-std-path() {
   local \
     _pkgdesc=()
-  pkgver="1.1.5"
   _ns="themartiancompany"
   url="${_http}/${_ns}/${_proj}-${_pkg}-path-bin"
-  _archive="${_ns}-${_pkg}__path-${pkgver}.tgz"
+  _archive="${_ns}-${_pkg}__path-${_path_pkgver}.tgz"
   _pkgdesc=(
     "Utilities for working with"
     "file system paths."
