@@ -112,7 +112,7 @@ _bundle_commit="a0acfb0084c252ec854fa04a2caf7c043f201375"
 _internal_commit="6a52f4f84d9e7e6614744565aac986af6a339af2"
 _path_commit="7cf8de027f5deac33fc3b5bfeed3f3a2e427076f"
 _commit="43de5dfd4f389f5835cd2ae91389903396228e1b"
-pkgrel=5
+pkgrel=6
 arch=(
   'any'
 )
@@ -345,20 +345,23 @@ build() {
          "${_tarname}"
        # See https://github.com/denoland/std/issues/6864
     elif [[ "${_git}" == "false" ]]; then
-      cd \
-        "${srcdir}/${_internalname}"
-      npm \
-        pack
-      mv \
-        *".tgz" \
-        "${srcdir}"
-      cd \
-        "${srcdir}/${_pathname}"
-      npm \
-        pack
-      mv \
-        *".tgz" \
-        "${srcdir}"
+      if [[ "${_evmfs}" == "true" ]]; then
+        cd \
+          "${srcdir}/${_internalname}"
+        npm \
+          pack
+        mv \
+          *".tgz" \
+          "${srcdir}"
+      elif [[ "${_evmfs}" == "false" ]]; then
+        cd \
+          "${srcdir}/${_tarname}"
+        npm \
+          pack
+        mv \
+          *".tgz" \
+          "${srcdir}"
+      fi
     fi
   fi
 }
