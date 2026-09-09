@@ -112,7 +112,7 @@ _bundle_commit="a0acfb0084c252ec854fa04a2caf7c043f201375"
 _internal_commit="6a52f4f84d9e7e6614744565aac986af6a339af2"
 _path_commit="7cf8de027f5deac33fc3b5bfeed3f3a2e427076f"
 _commit="43de5dfd4f389f5835cd2ae91389903396228e1b"
-pkgrel=11
+pkgrel=12
 arch=(
   'any'
 )
@@ -438,6 +438,11 @@ package_nodejs-std-internal() {
     "${_proj}-${_pkg}=${pkgver}"
     "${_node}-${_proj}-${_pkg}=${pkgver}"
   )
+  if [[ "${_evmfs}" == "false" && \
+          "${_git}" == "false" && \
+          "${_npm}" == "false"  ]]; then
+    _archive="${_pkg}-internal-${_internal_pkgver}.tgz"
+  fi
   _npm_package \
     "${srcdir}/${_archive}" \
     "${pkgdir}"
@@ -462,6 +467,11 @@ package_nodejs-std-path() {
     "${_proj}-${_pkg}=${pkgver}"
     "${_node}-${_proj}-${_pkg}=${pkgver}"
   )
+  if [[ "${_evmfs}" == "false" && \
+          "${_git}" == "false" && \
+          "${_npm}" == "false"  ]]; then
+    _archive="${_pkg}-path-${_path_pkgver}.tgz"
+  fi
   _npm_package \
     "${srcdir}/${_archive}" \
     "${pkgdir}"
