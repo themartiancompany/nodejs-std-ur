@@ -58,8 +58,11 @@ if [[ ! -v "_npm" ]]; then
     _npm="false"
   fi
 fi
+if [[ ! -v "_git_service" ]]; then
+  _git_service="github"
+fi
 if [[ ! -v "_git_http" ]]; then
-  _git_http="github"
+  _git_http="${_git_service}"
 fi
 if [[ ! -v "_git" ]]; then
   if [[ "${_evmfs}" == "true" ]]; then
@@ -68,7 +71,7 @@ if [[ ! -v "_git" ]]; then
     _git="false"
   fi
 fi
-if [[ ! -v "${_archive_format}" ]]; then
+if [[ ! -v "_archive_format" ]]; then
   if [[ "${_npm}" == "true" ]]; then
     _archive_format="tgz"
   elif [[ "${_npm}" == "false" ]]; then
@@ -111,8 +114,12 @@ arch=(
   'any'
 )
 _http="https://${_git_http}.com"
-_ns="${_proj}land"
+if [[ ! -v "_ns" ]]; then
+  _ns="${_proj}land"
+  _ns="themartiancompany"
+fi
 url="${_http}/${_ns}/${_pkg}"
+_url="${url}"
 license=(
   'MIT'
 )
@@ -138,10 +145,19 @@ if [[ "${_git}" == "true" ]]; then
     "git"
   )
 fi
-if [[ "${_npm}" == "true" ]]; then
-  _tag="${pkgver}"
-elif [[ "${_npm}" == "false" ]]; then
-  _tag="${_commit}"
+if [[ ! -v "_tag_name" ]]; then
+  if [[ "${_npm}" == "true" ]]; then
+    _tag_name="commit"
+  elif [[ "${_npm}" == "false" ]]; then
+    _tag_name="tag"
+  fi
+fi
+if [[ ! -v "_tag" ]]; then
+  if [[ "${_tag_name}" == "commit" ]]; then
+    _tag="${_commit}"
+  elif [[ "${_tag_name}" == "tag" ]]; then
+    _tag="${pkgver}"
+  fi
 fi
 _tarname="${_pkg}-${_tag}"
 _internalname="${_proj}-${_pkg}-internal-bin-${_internal_commit}"
@@ -231,6 +247,24 @@ if [[ "${_evmfs}" == "true" ]]; then
 elif [[ "${_evmfs}" == "false" ]]; then
   if [[ "${_npm}" == "true" ]]; then
     _uri="${_npm_http}/${_pkg}/-/${_tarfile}"
+  elif [[ "${_npm}" == "false" ]]; then
+    if [[ "${_git}" == true ]]; then
+      _src="${_tarname}::git+${_url}#${_tag_name}=${_tag}?signed"
+      _sum="SKIP"
+    elif [[ "${_git}" == false ]]; then
+      _uri=""
+      if [[ "${_git_service}" == "github" ]]; then
+        if [[ "${_tag_name}" == "commit" ]]; then
+          _uri="${_url}/archive/${_commit}.${_archive_format}"
+          _sum="${_github_sum}"
+        fi
+      elif [[ "${_git_service}" == "gitlab" ]]; then
+        if [[ "${_tag_name}" == "commit" ]]; then
+          _uri="${_url}/-/archive/${_tag}/${_tag}.${_archive_format}"
+        fi
+      fi
+      _src="${_tarfile}::${_uri}"
+    fi
   fi
   _src="${_tarfile}::${_uri}"
   source+=(
