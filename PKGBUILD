@@ -112,7 +112,7 @@ _bundle_commit="a0acfb0084c252ec854fa04a2caf7c043f201375"
 _internal_commit="6a52f4f84d9e7e6614744565aac986af6a339af2"
 _path_commit="7cf8de027f5deac33fc3b5bfeed3f3a2e427076f"
 _commit="43de5dfd4f389f5835cd2ae91389903396228e1b"
-pkgrel=10
+pkgrel=11
 arch=(
   'any'
 )
@@ -361,7 +361,8 @@ build() {
         deno \
           install
         deno \
-          pack
+          pack \
+          --allow-dirty
         mv \
           *".tgz" \
           "${srcdir}"
@@ -370,7 +371,8 @@ build() {
         deno \
           install
         deno \
-          pack
+          pack \
+          --allow-dirty
         mv \
           *".tgz" \
           "${srcdir}"
