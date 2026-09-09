@@ -112,7 +112,7 @@ _bundle_commit="a0acfb0084c252ec854fa04a2caf7c043f201375"
 _internal_commit="6a52f4f84d9e7e6614744565aac986af6a339af2"
 _path_commit="7cf8de027f5deac33fc3b5bfeed3f3a2e427076f"
 _commit="43de5dfd4f389f5835cd2ae91389903396228e1b"
-pkgrel=2
+pkgrel=3
 arch=(
   'any'
 )
@@ -154,9 +154,9 @@ if [[ "${_git}" == "true" ]]; then
 fi
 if [[ ! -v "_tag_name" ]]; then
   if [[ "${_npm}" == "true" ]]; then
-    _tag_name="commit"
-  elif [[ "${_npm}" == "false" ]]; then
     _tag_name="tag"
+  elif [[ "${_npm}" == "false" ]]; then
+    _tag_name="commit"
   fi
 fi
 if [[ ! -v "_tag" ]]; then
@@ -173,6 +173,7 @@ _pathfile="${_pathname}.${_archive_format}"
 _internalfile="${_internalname}.${_archive_format}"
 _tarfile="${_tarname}.${_archive_format}"
 _sum="d49906ca8f1488dc73fb20e692523cbd1f778caaecefeb368166e0fb6d9d78ef"
+_github_sum="boh"
 _sig_sum="6122a66cdcdbfe0c58c0744db63d3ce9cebcf2c12080a5765f149b964807d8a0"
 _internal_sum="cc08c83d9ebc2ac6f6f542e11e1ffff4acff8f353c2f2e8089ee8bc3a6dd5385"
 _internal_sig_sum="a4c07da9303f7f59aad15564007bc93bc68b570fe7318b62aa1861563beeefb6"
@@ -256,7 +257,8 @@ elif [[ "${_evmfs}" == "false" ]]; then
     _uri="${_npm_http}/${_pkg}/-/${_tarfile}"
   elif [[ "${_npm}" == "false" ]]; then
     if [[ "${_git}" == true ]]; then
-      _src="${_tarname}::git+${_url}#${_tag_name}=${_tag}?signed"
+      _uri="git+${_url}#${_tag_name}=${_tag}?signed"
+      _tarfile="${_tarname}"
       _sum="SKIP"
     elif [[ "${_git}" == false ]]; then
       _uri=""
