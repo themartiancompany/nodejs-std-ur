@@ -48,8 +48,11 @@ if [[ ! -v "_evmfs" ]]; then
   fi
 fi
 _node="nodejs"
-if [[ "${_os}" == "Android" ]]; then
-  _node="nodejs-lts"
+if [[ ! -v "_lts" ]]; then
+  if [[ "${_os}" == "Android" ]]; then
+    _lts="true"
+  fi
+  _lts="false"
 fi
 if [[ ! -v "_npm" ]]; then
   if [[ "${_evmfs}" == "true" ]]; then
@@ -123,8 +126,12 @@ _url="${url}"
 license=(
   'MIT'
 )
+_node_pkg="${_node}"
+if [[ "${_lts}" == "true" ]]; then
+  _node_pkg="${_node}-lts"
+fi
 depends=(
-  "${_node}"
+  "${_node_pkg}"
 )
 provides=(
   "${_pkg}=${pkgver}"
