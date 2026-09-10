@@ -268,14 +268,15 @@ jobs:
       #           -y \
       #           "rust" \
       #           "rust-std-armv7-linux-androideabi"
-      - name:
-          Installs Deno.
-        run: |
-          /entrypoint.sh \
-            npm \
-              install \
-                -g \
-                "deno"
+      # Needs patches
+      # - name:
+      #     Installs Deno.
+      #   run: |
+      #     /entrypoint.sh \
+      #       npm \
+      #         install \
+      #           -g \
+      #           "deno"
       - name:
           Installs Git.
         run: |
