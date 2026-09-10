@@ -120,7 +120,7 @@ _bundle_commit="a0acfb0084c252ec854fa04a2caf7c043f201375"
 _internal_commit="6a52f4f84d9e7e6614744565aac986af6a339af2"
 _path_commit="7cf8de027f5deac33fc3b5bfeed3f3a2e427076f"
 _commit="43de5dfd4f389f5835cd2ae91389903396228e1b"
-pkgrel=17
+pkgrel=18
 arch=(
   'any'
 )
@@ -174,12 +174,31 @@ if [[ ! -v "_tag" ]]; then
     _tag="${pkgver}"
   fi
 fi
+if [[ ! -v "_internal_tag" ]]; then
+  if [[ "${_tag_name}" == "commit" ]]; then
+    _internal_tag="${_internal_commit}"
+  elif [[ "${_tag_name}" == "tag" ]]; then
+    _internal_tag="${_internal_pkgver}"
+  fi
+fi
+if [[ ! -v "_path_tag" ]]; then
+  if [[ "${_tag_name}" == "commit" ]]; then
+    _path_tag="${_path_commit}"
+  elif [[ "${_tag_name}" == "tag" ]]; then
+    _path_tag="${_path_pkgver}"
+  fi
+fi
 _tarname="${_pkg}-${_tag}"
-_internalname="${_proj}-${_pkg}-internal-bin-${_internal_commit}"
-_pathname="${_proj}-${_pkg}-path-bin-${_path_commit}"
+_npm_tarname="${_ns}-${_pkg}-${_tag}"
+_internalname="${_proj}-${_pkg}-internal-bin-${_internal_tag}"
+_pathname="${_proj}-${_pkg}-path-bin-${_path_tag}"
 _pathfile="${_pathname}.${_archive_format}"
 _internalfile="${_internalname}.${_archive_format}"
+_internal_tarname="${_ns}-${_internalname}-${_tag}"
+_path_tarname="${_ns}-${_pathname}-${_tag}"
 _tarfile="${_tarname}.${_archive_format}"
+_internal_tarfile="${_internal_tarname}.${_archive_format}"
+_path_tarfile="${_path_tarname}.${_archive_format}"
 _sum="d49906ca8f1488dc73fb20e692523cbd1f778caaecefeb368166e0fb6d9d78ef"
 _github_sum="3259c5391af592923f2f88b597a2eac606fcf030e12d2514b992c6699ca1b2fe"
 _github_sig_sum="8922526c845a655c20599019f7dd1c401496fb075d3655e934758455c958c7c7"
@@ -213,8 +232,8 @@ _internal_sig_uri="${_evmfs_dir}/${_internal_sig_sum}"
 _internal_sig_src="${_internalfile}.sig::${_internal_sig_uri}"
 _path_sig_uri="${_evmfs_dir}/${_path_sig_sum}"
 _path_sig_src="${_pathfile}.sig::${_path_sig_uri}"
-_npm_http="http://registry.npmjs.org"
 _npm_http="http://npm.sr.io"
+_npm_http="http://registry.npmjs.org"
 source=()
 sha256sums=()
 if [[ "${_evmfs}" == "true" ]]; then
@@ -263,7 +282,18 @@ if [[ "${_evmfs}" == "true" ]]; then
   fi
 elif [[ "${_evmfs}" == "false" ]]; then
   if [[ "${_npm}" == "true" ]]; then
-    _uri="${_npm_http}/${_pkg}/-/${_tarfile}"
+    _internal_uri="${_npm_http}/@${_ns}/${_pkg}__internal/-/${_ns}-${_pkg}__internal-${_internal_pkgver}.${_archive_format}"
+    _internal_src="${_internal_tarfile}::${_internal_uri}"
+    _path_uri="${_npm_http}/@${_ns}/${_pkg}__path/-/${_ns}-${_pkg}__path-${_path_pkgver}.${_archive_format}"
+    _path_src="${_path_tarfile}::${_path_uri}"
+    source+=(
+      "${_internal_src}"
+      "${_path_src}"
+    )
+    sha256sums+=(
+      "${_internal_sum}"
+      "${_path_sum}"
+    )
   elif [[ "${_npm}" == "false" ]]; then
     if [[ "${_git}" == true ]]; then
       _uri="git+${_url}#${_tag_name}=${_tag}?signed"
@@ -284,17 +314,20 @@ elif [[ "${_evmfs}" == "false" ]]; then
       _src="${_tarfile}::${_uri}"
     fi
   fi
-  _src="${_tarfile}::${_uri}"
-  source+=(
-    "${_src}"
-  )
-  sha256sums+=(
-    "${_sum}"
-  )
+  if [[ -v "_uri" ]]; then
+    _src="${_tarfile}::${_uri}"
+    source+=(
+      "${_src}"
+    )
+    sha256sums+=(
+      "${_sum}"
+    )
+  fi
 fi
 if [[ "${_npm}" == "true" ]]; then
   noextract=(
-    "${_tarfile}"
+    "${_path_tarfile}"
+    "${_internal_tarfile}"
   )
 fi
 validpgpkeys=(
