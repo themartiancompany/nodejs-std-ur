@@ -153,6 +153,10 @@ jobs:
               install \
                 -y \
                 "nodejs-lts"
+          /entrypoint.sh \
+            npm \
+              install \
+                "deno"
           ln \
             -sf \
             "${PREFIX}/bin" \
