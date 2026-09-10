@@ -120,7 +120,7 @@ _bundle_commit="a0acfb0084c252ec854fa04a2caf7c043f201375"
 _internal_commit="6a52f4f84d9e7e6614744565aac986af6a339af2"
 _path_commit="7cf8de027f5deac33fc3b5bfeed3f3a2e427076f"
 _commit="43de5dfd4f389f5835cd2ae91389903396228e1b"
-pkgrel=21
+pkgrel=22
 arch=(
   'any'
 )
@@ -284,15 +284,19 @@ elif [[ "${_evmfs}" == "false" ]]; then
   if [[ "${_npm}" == "true" ]]; then
     _internal_uri="${_npm_http}/@${_ns}/${_pkg}__internal/-/${_pkg}__internal-${_internal_pkgver}.${_archive_format}"
     _internal_src="${_internal_tarfile}::${_internal_uri}"
+    _internal_15_sum="77e8e2a3f71baf02c5a9a2ae363924ec1c3deec9f4ca2d3d0a7e0d058e7717e6"
+    _internal_17_sum="959b18b5ca434241097936f01d5b937689cc8897c34c6299d8fadbf533d37106"
     _path_uri="${_npm_http}/@${_ns}/${_pkg}__path/-/${_pkg}__path-${_path_pkgver}.${_archive_format}"
     _path_src="${_path_tarfile}::${_path_uri}"
+    _path_2_sum="b05ab2ee1b11993559c17556693ba250259bd22121cae0aa1fb209fb1388e74b"
+    _path_5_sum="0f42cbea53d65d6748d4faf2ec37019a442e1cd512b9d7b746cef6673cb19d2b"
     source+=(
       "${_internal_src}"
       "${_path_src}"
     )
     sha256sums+=(
-      "${_internal_sum}"
-      "${_path_sum}"
+      "${_internal_17_sum}"
+      "${_path_5_sum}"
     )
   elif [[ "${_npm}" == "false" ]]; then
     if [[ "${_git}" == true ]]; then
