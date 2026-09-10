@@ -153,10 +153,6 @@ jobs:
               install \
                 -y \
                 "nodejs-lts"
-          /entrypoint.sh \
-            npm \
-              install \
-                "deno"
           ln \
             -sf \
             "${PREFIX}/bin" \
@@ -272,6 +268,14 @@ jobs:
       #           -y \
       #           "rust" \
       #           "rust-std-armv7-linux-androideabi"
+      - name:
+          Installs Deno.
+        run: |
+          /entrypoint.sh \
+            npm \
+              install \
+                -g \
+                "deno"
       - name:
           Installs Git.
         run: |
