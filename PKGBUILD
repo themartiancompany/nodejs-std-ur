@@ -483,11 +483,14 @@ package_nodejs-std-internal() {
     "${_proj}-${_pkg}=${pkgver}"
     "${_node}-${_proj}-${_pkg}=${pkgver}"
   )
+  ls \
+    -lsh \
+    "${srcdir}"
   if [[ "${_evmfs}" == "false" && \
           "${_git}" == "false" ]]; then
     if [[ "${_npm}" == "false"  ]]; then
       _archive="${_pkg}-internal-${_internal_commit_pkgver}.tgz"
-    elif [[ "${_npm}" == "false"  ]]; then
+    elif [[ "${_npm}" == "true"  ]]; then
       _archive="${_internal_tarfile}"
     fi
   fi
@@ -515,11 +518,14 @@ package_nodejs-std-path() {
     "${_proj}-${_pkg}=${pkgver}"
     "${_node}-${_proj}-${_pkg}=${pkgver}"
   )
+  ls \
+    -lsh \
+    "${srcdir}"
   if [[ "${_evmfs}" == "false" && \
           "${_git}" == "false" ]]; then
     if [[ "${_npm}" == "false"  ]]; then
       _archive="${_pkg}-path-${_path_commit_pkgver}.tgz"
-    elif [[ "${_npm}" == "false"  ]]; then
+    elif [[ "${_npm}" == "true"  ]]; then
       _archive="${_path_tarfile}"
     fi
   fi
